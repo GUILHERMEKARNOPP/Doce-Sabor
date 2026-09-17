@@ -70,7 +70,7 @@ h1, h2, h3, p { margin: 0; }
   height: 43px;
   padding: 0 22px;
   border: 1px solid var(--gold);
-  border-radius: 6px;
+  border-radius: 999px;
   transition: opacity 0.2s ease;
 }
 .btn:hover { opacity: 0.85; }
@@ -123,6 +123,7 @@ h1, h2, h3, p { margin: 0; }
 
 .nav-cart {
   position: relative;
+  border-radius: 999px;
   margin-left: auto;
   display: flex;
   align-items: center;
@@ -150,6 +151,7 @@ h1, h2, h3, p { margin: 0; }
 }
 
 .nav-toggle {
+  border-radius: 6px;
   display: none;
   flex-direction: column;
   gap: 5px;
@@ -496,6 +498,7 @@ body.sem-scroll { overflow: hidden; }
   color: var(--brown);
 }
 .modal-close {
+  border-radius: 50%;
   background: none;
   border: none;
   padding: 0 4px;
@@ -563,7 +566,7 @@ body.sem-scroll { overflow: hidden; }
   height: 38px;
   padding: 0 6px;
   border: 1px solid var(--gold);
-  border-radius: 6px;
+  border-radius: 999px;
 }
 .menu-qtd button {
   width: 30px;
@@ -630,6 +633,7 @@ body.sem-scroll { overflow: hidden; }
 .cart-nota { margin-top: 16px; font-size: 13px; color: var(--brown); opacity: 0.75; }
 
 .cart-esvaziar {
+  border-radius: 999px;
   margin-top: 14px;
   padding: 0;
   background: none;
