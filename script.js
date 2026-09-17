@@ -162,15 +162,55 @@ document.addEventListener("DOMContentLoaded", () => {
       preco.className = "menu-preco";
       preco.textContent = emReais(p.preco);
 
+      const controle = document.createElement("div");
+      controle.className = "menu-controle";
+      controle.dataset.id = p.id;
+
+      li.append(img, nome, preco, controle);
+      menuGrid.append(li);
+    });
+  }
+
+  /**
+   * Desenha o controle do card: um "Adicionar" enquanto o sabor não está no
+   * carrinho, e os botões de quantidade depois — assim o cliente ajusta o
+   * pedido sem sair do menu.
+   */
+  function desenharControle(caixa) {
+    const id = caixa.dataset.id;
+    const qtd = carrinho.get(id) || 0;
+    caixa.replaceChildren();
+
+    if (qtd === 0) {
       const botao = document.createElement("button");
       botao.type = "button";
       botao.className = "btn btn-outline menu-add";
       botao.textContent = "Adicionar";
-      botao.addEventListener("click", () => adicionar(p.id));
+      botao.addEventListener("click", () => adicionar(id));
+      caixa.append(botao);
+      return;
+    }
 
-      li.append(img, nome, preco, botao);
-      menuGrid.append(li);
-    });
+    const grupo = document.createElement("div");
+    grupo.className = "menu-qtd";
+
+    const menos = document.createElement("button");
+    menos.type = "button";
+    menos.textContent = "−";
+    menos.setAttribute("aria-label", "Remover uma unidade de " + produto(id).nome);
+    menos.addEventListener("click", () => mudarQtd(id, -1));
+
+    const conta = document.createElement("span");
+    conta.textContent = qtd + " un";
+
+    const mais = document.createElement("button");
+    mais.type = "button";
+    mais.textContent = "+";
+    mais.setAttribute("aria-label", "Adicionar uma unidade de " + produto(id).nome);
+    mais.addEventListener("click", () => mudarQtd(id, 1));
+
+    grupo.append(menos, conta, mais);
+    caixa.append(grupo);
   }
 
   function adicionar(id) {
@@ -199,6 +239,8 @@ document.addEventListener("DOMContentLoaded", () => {
     menuStatus.textContent = itens
       ? itens + (itens === 1 ? " item no carrinho · " : " itens no carrinho · ") + emReais(totalValor())
       : "Seu carrinho está vazio.";
+
+    menuGrid.querySelectorAll(".menu-controle").forEach(desenharControle);
 
     cartList.replaceChildren();
     carrinho.forEach((qtd, id) => {
