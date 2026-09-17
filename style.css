@@ -102,12 +102,27 @@ h1, h2, h3, p { margin: 0; }
 }
 .nav-links {
   display: flex;
-  gap: 18px;
+  align-items: center;
+  gap: 4px;
   font-size: 15px;
   letter-spacing: -0.2px;
 }
-.nav-links a { padding: 2px 0; }
-.nav-links a:hover { text-decoration: underline; }
+/* Cápsulas como o resto do site: em repouso, um contorno dourado discreto que
+   dá forma sem competir com a logo; ao passar o mouse, o dourado preenche. */
+.nav-links a {
+  padding: 8px 16px;
+  border: 1px solid rgba(201, 162, 39, 0.55);
+  border-radius: 999px;
+  line-height: 1;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+.nav-links a:hover,
+.nav-links a:focus-visible {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--brown);
+  text-decoration: none;
+}
 
 .nav-logo {
   position: absolute;
@@ -865,7 +880,7 @@ body.sem-scroll { overflow: hidden; }
     z-index: 20;
   }
   .nav-links.open { display: flex; }
-  .nav-links a { padding: 10px 0; font-size: 16px; }
+  .nav-links a { padding: 11px 18px; font-size: 16px; }
   .nav-social { margin: 12px 0 4px; }
   .nav-cart span:not(.nav-cart-count) { display: none; }
   .nav-logo { left: 50%; font-size: 26px; }
