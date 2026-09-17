@@ -28,6 +28,7 @@ python -m http.server 8000     # depois acesse http://localhost:8000
 ├── script.js     → menu mobile, rolagem suave, catálogo e carrinho
 ├── admin.js      → login e CRUD de produtos
 ├── config.js     → endereço da API (um lugar só, vale para as duas páginas)
+├── favicon.ico   → ícone do site
 ├── render.yaml   → configuração do deploy da API no Render
 ├── images/       → fotos do site
 └── backend/      → a API (Node + Express + PostgreSQL)
@@ -49,17 +50,20 @@ Nossos Sabores, O Melhor Bolo de Pote, Sobre Nós, Nós Entregamos, galeria e ro
 
 O site sozinho funciona (veja acima). Para mexer no painel da loja, são três terminais:
 
+**Em produção está tudo na nuvem:** a loja e o painel no GitHub Pages, a API no
+Render e o banco no Neon. O `config.js` aponta sempre para a API publicada — não
+há configuração de localhost.
+
+Para mexer no back-end na sua máquina (opcional), suba um banco e a API:
+
 ```bash
-# 1. banco de dados local (não precisa instalar Postgres nem Docker)
-cd backend && npm install && npm run db:dev
-
-# 2. a API
-cd backend && cp .env.example .env    # depois edite o .env
-npm start
-
-# 3. o site
-python -m http.server 8000            # http://localhost:8000/admin.html
+cd backend && npm install
+npm run db:dev     # Postgres local, sem instalar nada
+npm start          # a API em localhost:3000
 ```
+
+Nesse caso, aponte o `config.js` para `http://localhost:3000` enquanto testa e
+acrescente a origem local em `ORIGENS_PERMITIDAS` no `.env`.
 
 O `backend/.env` guarda a senha do banco, o segredo das sessões e a senha do
 administrador. **Ele nunca vai para o Git** — está no `.gitignore`. Use o
@@ -83,7 +87,8 @@ O `render.yaml` já descreve o serviço. No painel do Render: **New → Blueprin
 aponte para este repositório e preencha as variáveis marcadas como `sync: false`
 (`DATABASE_URL`, `ADMIN_EMAIL`, `ADMIN_SENHA`). O `JWT_SECRET` o Render gera sozinho.
 
-Depois de publicar, troque a URL de produção em `config.js` pela do serviço.
+A URL do serviço fica em `config.js`. O banco é o Neon; a `DATABASE_URL` é colada
+no painel do Render e nunca entra no repositório.
 
 > No plano gratuito o servidor hiberna após 15 minutos parado e a primeira
 > requisição pode levar meio minuto. Por isso a loja abre com uma lista de sabores
@@ -230,7 +235,6 @@ Decisões que valem conhecer antes de mexer:
 
 ## Limitações conhecidas
 
-- **O carrinho vive só na memória da aba.** Recarregar a página esvazia o pedido.
 - **A imagem do produto é guardada no banco**, não em disco: o disco do Render é
   apagado a cada deploy. Funciona bem para dezenas de produtos; para centenas,
   valeria um armazenamento de arquivos à parte.

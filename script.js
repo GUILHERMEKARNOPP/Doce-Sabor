@@ -63,7 +63,16 @@ document.addEventListener("DOMContentLoaded", () => {
         estoque: p.estoque,
         img: p.imagem ? API + p.imagem : null,
       }));
+      // o catálogo mudou: mantém o que ainda existe e respeita o estoque novo
+      const anterior = [...carrinho];
       carrinho.clear();
+      anterior.forEach(([id, qtd]) => {
+        const p = produto(id);
+        if (!p) return;
+        const limite = p.estoque === null || p.estoque === undefined ? qtd : Math.min(qtd, p.estoque);
+        if (limite > 0) carrinho.set(id, limite);
+      });
+      gravarCarrinho();
       montarMenu();
       atualizar();
     } catch {
@@ -72,6 +81,45 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const carrinho = new Map();                 // id do produto -> quantidade
+
+  /**
+   * O carrinho sobrevive a recarregar a página. Fica em localStorage e não em
+   * memória porque o cliente costuma sair para conferir um sabor, trocar de aba
+   * ou receber uma ligação no meio do pedido — e voltar para um carrinho vazio
+   * faz ele começar tudo de novo.
+   *
+   * Guardamos só id e quantidade, nunca preço: o valor vem sempre do catálogo
+   * atual, senão um preço antigo ficaria congelado no navegador de quem voltasse
+   * dias depois.
+   */
+  const CHAVE_CARRINHO = "ds_carrinho";
+
+  function gravarCarrinho() {
+    try {
+      localStorage.setItem(CHAVE_CARRINHO, JSON.stringify([...carrinho]));
+    } catch {
+      /* navegação anônima ou armazenamento bloqueado: segue sem persistir */
+    }
+  }
+
+  function lerCarrinho() {
+    try {
+      const bruto = JSON.parse(localStorage.getItem(CHAVE_CARRINHO) || "[]");
+      if (!Array.isArray(bruto)) return;
+
+      bruto.forEach((par) => {
+        if (!Array.isArray(par) || par.length !== 2) return;
+        const [id, qtd] = par;
+        // o conteúdo veio do navegador do cliente: só entra o que existe no
+        // catálogo de agora e com quantidade que faça sentido
+        if (typeof id !== "string" || !Number.isInteger(qtd) || qtd < 1) return;
+        if (!produto(id)) return;
+        carrinho.set(id, qtd);
+      });
+    } catch {
+      /* conteúdo inválido: começa com o carrinho vazio */
+    }
+  }
 
   const menuModal = document.getElementById("menuModal");
   const cartModal = document.getElementById("cartModal");
@@ -142,6 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (nova > 0) carrinho.set(id, nova);
     else carrinho.delete(id);
+    gravarCarrinho();
     atualizar();
   }
 
@@ -245,6 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.open(LINK_WHATSAPP + "?text=" + encodeURIComponent(texto), "_blank", "noopener");
   });
 
+  lerCarrinho();
   montarMenu();
   atualizar();
   carregarCatalogo();

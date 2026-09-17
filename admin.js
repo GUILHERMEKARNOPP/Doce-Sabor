@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const API = window.DOCE_SABOR_API || "http://localhost:3000";
+  const API = window.DOCE_SABOR_API;   // definido em config.js
 
   /**
    * O token fica em sessionStorage: some ao fechar a aba e nunca é enviado
