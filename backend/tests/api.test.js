@@ -197,7 +197,6 @@ test("cria produto com imagem", async () => {
   dados.append("nome", "Ninho com Nutella");
   dados.append("descricao", "Camadas de creme de ninho");
   dados.append("preco", "19,90");
-  dados.append("estoque", "7");
   dados.append("imagem", new Blob([await fotoDeTeste()], { type: "image/png" }), "foto.png");
 
   const r = await json("/api/produtos", {
@@ -209,7 +208,6 @@ test("cria produto com imagem", async () => {
   assert.equal(r.status, 201);
   assert.equal(corpo.nome, "Ninho com Nutella");
   assert.equal(corpo.preco, 19.9, "preço com vírgula deve ser aceito");
-  assert.equal(corpo.estoque, 7);
   assert.ok(corpo.imagem);
   idCriado = corpo.id;
 });
@@ -249,19 +247,6 @@ test("preço negativo é recusado", async () => {
   assert.equal(r.status, 400);
 });
 
-test("estoque fracionado é recusado", async () => {
-  const dados = new FormData();
-  dados.append("nome", "Fracionado");
-  dados.append("preco", "10");
-  dados.append("estoque", "2.5");
-  const r = await json("/api/produtos", {
-    method: "POST",
-    headers: { Authorization: "Bearer " + token },
-    body: dados,
-  });
-  assert.equal(r.status, 400);
-});
-
 test("nome com aspas e ponto-e-vírgula não quebra a query", async () => {
   const nome = `Pote'; DROP TABLE produtos; --`;
   const dados = new FormData();
@@ -278,10 +263,9 @@ test("nome com aspas e ponto-e-vírgula não quebra a query", async () => {
   assert.ok(lista.some((p) => p.nome === nome), "a tabela continua de pé e o nome foi salvo literal");
 });
 
-test("atualiza preço e estoque", async () => {
+test("atualiza o preço sem apagar os outros campos", async () => {
   const dados = new FormData();
   dados.append("preco", "21.50");
-  dados.append("estoque", "3");
   const r = await json("/api/produtos/" + idCriado, {
     method: "PUT",
     headers: { Authorization: "Bearer " + token },
@@ -290,8 +274,14 @@ test("atualiza preço e estoque", async () => {
   const corpo = await r.json();
   assert.equal(r.status, 200);
   assert.equal(corpo.preco, 21.5);
-  assert.equal(corpo.estoque, 3);
   assert.equal(corpo.nome, "Ninho com Nutella", "o nome não deve ter sido apagado");
+});
+
+test("a listagem pública traz todo produto cadastrado", async () => {
+  const lista = await (await fetch(base + "/api/produtos")).json();
+  assert.ok(lista.length > 0);
+  assert.ok(lista.every((p) => p.nome && typeof p.preco === "number"));
+  assert.ok(lista.every((p) => !("estoque" in p)), "estoque saiu do modelo");
 });
 
 test("a lista pública não expõe os bytes da imagem", async () => {

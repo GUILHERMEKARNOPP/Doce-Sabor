@@ -57,17 +57,6 @@ function validarProduto(corpo, { parcial = false } = {}) {
     erros.push("Informe o preço.");
   }
 
-  if (corpo.estoque !== undefined && corpo.estoque !== "") {
-    const estoque = Number(corpo.estoque);
-    if (!Number.isInteger(estoque) || estoque < 0 || estoque > 99999) {
-      erros.push("O estoque deve ser um número inteiro de 0 a 99999.");
-    } else {
-      valores.estoque = estoque;
-    }
-  } else if (!parcial) {
-    valores.estoque = 0;
-  }
-
   return { erros, valores };
 }
 
@@ -77,7 +66,6 @@ function paraJson(linha) {
     nome: linha.nome,
     descricao: linha.descricao,
     preco: linha.preco_centavos / 100,
-    estoque: linha.estoque,
     imagem: linha.tem_imagem ? `/api/produtos/${linha.id}/imagem` : null,
   };
 }
@@ -87,7 +75,7 @@ function paraJson(linha) {
 router.get("/", async (_req, res, next) => {
   try {
     const { rows } = await consultar(
-      `SELECT id, nome, descricao, preco_centavos, estoque, imagem IS NOT NULL AS tem_imagem
+      `SELECT id, nome, descricao, preco_centavos, imagem IS NOT NULL AS tem_imagem
          FROM produtos ORDER BY nome`
     );
     res.json(rows.map(paraJson));
@@ -132,10 +120,10 @@ router.post("/", exigirAdmin, upload.single("imagem"), async (req, res, next) =>
     }
 
     const { rows } = await consultar(
-      `INSERT INTO produtos (nome, descricao, preco_centavos, estoque, imagem, imagem_tipo)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       RETURNING id, nome, descricao, preco_centavos, estoque, imagem IS NOT NULL AS tem_imagem`,
-      [valores.nome, valores.descricao, valores.preco_centavos, valores.estoque, foto.dados, foto.tipo]
+      `INSERT INTO produtos (nome, descricao, preco_centavos, imagem, imagem_tipo)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id, nome, descricao, preco_centavos, imagem IS NOT NULL AS tem_imagem`,
+      [valores.nome, valores.descricao, valores.preco_centavos, foto.dados, foto.tipo]
     );
     res.status(201).json(paraJson(rows[0]));
   } catch (erro) {
@@ -172,7 +160,7 @@ router.put("/:id", exigirAdmin, upload.single("imagem"), async (req, res, next) 
     const { rows } = await consultar(
       `UPDATE produtos SET ${atribuicoes.join(", ")}, atualizado_em = now()
         WHERE id = $${campos.length + 1}
-       RETURNING id, nome, descricao, preco_centavos, estoque, imagem IS NOT NULL AS tem_imagem`,
+       RETURNING id, nome, descricao, preco_centavos, imagem IS NOT NULL AS tem_imagem`,
       [...parametros, id]
     );
     if (!rows[0]) return res.status(404).json({ erro: "Produto não encontrado." });

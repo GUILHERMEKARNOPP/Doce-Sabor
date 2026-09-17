@@ -150,10 +150,6 @@ document.addEventListener("DOMContentLoaded", () => {
       preco.className = "admin-preco";
       preco.textContent = emReais(p.preco);
 
-      const estoque = document.createElement("span");
-      estoque.className = "admin-estoque" + (p.estoque === 0 ? " admin-estoque-zero" : "");
-      estoque.textContent = p.estoque === 0 ? "sem estoque" : p.estoque + " un";
-
       const acoes = document.createElement("div");
       acoes.className = "admin-acoes";
 
@@ -170,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
       excluir.addEventListener("click", () => pedirExclusao(p));
 
       acoes.append(editar, excluir);
-      linha.append(foto, texto, preco, estoque, acoes);
+      linha.append(foto, texto, preco, acoes);
       lista.append(linha);
     });
   }
@@ -185,7 +181,6 @@ document.addEventListener("DOMContentLoaded", () => {
     el("nome").value = produto ? produto.nome : "";
     el("descricao").value = produto ? produto.descricao : "";
     el("preco").value = produto ? produto.preco : "";
-    el("estoque").value = produto ? produto.estoque : 0;
     el("imagem").value = "";
 
     const previa = el("previa");
@@ -226,7 +221,6 @@ document.addEventListener("DOMContentLoaded", () => {
     dados.append("nome", el("nome").value);
     dados.append("descricao", el("descricao").value);
     dados.append("preco", el("preco").value);
-    dados.append("estoque", el("estoque").value);
     const arquivo = el("imagem").files[0];
     if (arquivo) dados.append("imagem", arquivo);
 

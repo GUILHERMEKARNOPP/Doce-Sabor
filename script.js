@@ -38,11 +38,11 @@ document.addEventListener("DOMContentLoaded", () => {
    * dados reais assim que chegarem.
    */
   const RESERVA = [
-    { id: "chocolate-wafer", nome: "Chocolate com wafer", preco: 16, estoque: null, img: "images/menu-chocolate-wafer.jpg" },
-    { id: "morango-creme",   nome: "Morango com creme",   preco: 15, estoque: null, img: "images/menu-morango-creme.jpg" },
-    { id: "cookies",         nome: "Cookies com chocolate", preco: 17, estoque: null, img: "images/menu-cookies.jpg" },
-    { id: "doce-de-leite",   nome: "Doce de leite com brigadeiro", preco: 17, estoque: null, img: "images/menu-doce-de-leite.jpg" },
-    { id: "maracuja",        nome: "Maracujá com chocolate branco", preco: 18, estoque: null, img: "images/menu-maracuja.jpg" },
+    { id: "chocolate-wafer", nome: "Chocolate com wafer", preco: 16, img: "images/menu-chocolate-wafer.jpg" },
+    { id: "morango-creme",   nome: "Morango com creme",   preco: 15, img: "images/menu-morango-creme.jpg" },
+    { id: "cookies",         nome: "Cookies com chocolate", preco: 17, img: "images/menu-cookies.jpg" },
+    { id: "doce-de-leite",   nome: "Doce de leite com brigadeiro", preco: 17, img: "images/menu-doce-de-leite.jpg" },
+    { id: "maracuja",        nome: "Maracujá com chocolate branco", preco: 18, img: "images/menu-maracuja.jpg" },
   ];
 
   let PRODUTOS = RESERVA;
@@ -60,17 +60,13 @@ document.addEventListener("DOMContentLoaded", () => {
         id: String(p.id),
         nome: p.nome,
         preco: p.preco,
-        estoque: p.estoque,
         img: p.imagem ? API + p.imagem : null,
       }));
-      // o catálogo mudou: mantém o que ainda existe e respeita o estoque novo
+      // o catálogo mudou: mantém no carrinho o que continua existindo
       const anterior = [...carrinho];
       carrinho.clear();
       anterior.forEach(([id, qtd]) => {
-        const p = produto(id);
-        if (!p) return;
-        const limite = p.estoque === null || p.estoque === undefined ? qtd : Math.min(qtd, p.estoque);
-        if (limite > 0) carrinho.set(id, limite);
+        if (produto(id)) carrinho.set(id, qtd);
       });
       gravarCarrinho();
       montarMenu();
@@ -166,9 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const botao = document.createElement("button");
       botao.type = "button";
       botao.className = "btn btn-outline menu-add";
-      const esgotado = p.estoque === 0;
-      botao.textContent = esgotado ? "Esgotado" : "Adicionar";
-      botao.disabled = esgotado;
+      botao.textContent = "Adicionar";
       botao.addEventListener("click", () => adicionar(p.id));
 
       li.append(img, nome, preco, botao);
@@ -184,9 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const p = produto(id);
     if (!p) return;
 
-    let nova = (carrinho.get(id) || 0) + delta;
-    // estoque null = produto da lista de reserva, sem controle de estoque
-    if (p.estoque !== null && p.estoque !== undefined) nova = Math.min(nova, p.estoque);
+    const nova = (carrinho.get(id) || 0) + delta;
 
     if (nova > 0) carrinho.set(id, nova);
     else carrinho.delete(id);

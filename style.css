@@ -690,7 +690,7 @@ body.sem-scroll { overflow: hidden; }
 /* ---------- lista de produtos ---------- */
 .admin-linha {
   display: grid;
-  grid-template-columns: 64px 1fr 100px 110px auto;
+  grid-template-columns: 64px 1fr 110px auto;
   align-items: center;
   gap: 18px;
   background: var(--white);
@@ -720,8 +720,6 @@ body.sem-scroll { overflow: hidden; }
 }
 .admin-descricao { margin-top: 4px; font-size: 14px; line-height: 1.35; color: var(--brown); opacity: 0.75; }
 .admin-preco { font-size: 16px; font-weight: 500; color: var(--brown); }
-.admin-estoque { font-size: 14px; color: var(--brown); }
-.admin-estoque-zero { color: #A3261B; font-weight: 500; }
 .admin-acoes { display: flex; gap: 8px; }
 .admin-btn-pequeno { height: 34px; padding: 0 14px; font-size: 13px; }
 .admin-btn-perigo { color: #A3261B; border-color: #A3261B; }
@@ -869,7 +867,7 @@ body.sem-scroll { overflow: hidden; }
     grid-template-columns: 56px 1fr;
     row-gap: 10px;
   }
-  .admin-preco, .admin-estoque { grid-column: 2; }
+  .admin-preco { grid-column: 2; }
   .admin-acoes { grid-column: 1 / -1; }
   .admin-acoes .btn { flex: 1; }
   .campo-linha { grid-template-columns: 1fr; gap: 0; }

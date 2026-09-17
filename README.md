@@ -155,8 +155,8 @@ mexer em mais nada — eles nunca vão apontar para um número diferente do carr
 ### Sabores e preços
 
 **Com o back-end no ar, isso se faz pelo painel** (`/admin.html`), sem tocar em código:
-adicionar, editar preço, descrição, foto e estoque, ou excluir. Produtos com estoque
-zero aparecem como "Esgotado" na loja e não podem ser adicionados ao carrinho.
+adicionar, editar nome, descrição, preço e foto, ou excluir. Tudo que estiver
+cadastrado aparece na loja — não há controle de estoque.
 
 A lista abaixo, em `script.js`, é só a **reserva** usada enquanto a API não responde:
 
@@ -199,6 +199,17 @@ Trocar o valor ali muda a cor em toda a página de uma vez.
 O site é servido pelo GitHub Pages a partir da branch `main`, na raiz do repositório.
 **Todo push para `main` atualiza o site no ar** em um ou dois minutos — não existe
 passo de deploy manual.
+
+> **Antes de publicar mudanças em `script.js`, `admin.js` ou `config.js`, rode:**
+>
+> ```bash
+> node versionar.js
+> ```
+>
+> O GitHub Pages manda o navegador guardar esses arquivos por 10 minutos. O comando
+> põe um resumo do conteúdo na URL do script, então o navegador é obrigado a buscar
+> a versão nova na hora. Sem isso, quem já visitou a loja continua vendo o código
+> antigo por um tempo — foi o que fez um produto recém-cadastrado não aparecer.
 
 O repositório se chama `docesaborbr.github.io` de propósito: é esse nome que faz o
 GitHub servir o site em `docesaborbr.github.io` sem `/nome-do-repo/` no final.
