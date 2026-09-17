@@ -128,6 +128,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const cartTotal = document.getElementById("cartTotal");
   const navCartCount = document.getElementById("navCartCount");
   const finalizarBtn = document.getElementById("finalizar");
+  const cartEnviado = document.getElementById("cartEnviado");
+  const esvaziarBtn = document.getElementById("esvaziar");
 
   const emReais = (v) => "R$ " + v.toFixed(2).replace(".", ",");
   const produto = (id) => PRODUTOS.find((p) => p.id === id);
@@ -172,6 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function adicionar(id) {
+    cartEnviado.hidden = true;
     mudarQtd(id, 1);
   }
 
@@ -231,11 +234,23 @@ document.addEventListener("DOMContentLoaded", () => {
       cartList.append(li);
     });
 
-    cartVazio.hidden = itens > 0;
+    cartVazio.hidden = itens > 0 || !cartEnviado.hidden;
     cartTotalRow.hidden = itens === 0;
+    esvaziarBtn.hidden = itens === 0;
     cartTotal.textContent = emReais(totalValor());
     finalizarBtn.disabled = itens === 0;
   }
+
+  function esvaziarCarrinho() {
+    carrinho.clear();
+    gravarCarrinho();
+    atualizar();
+  }
+
+  esvaziarBtn.addEventListener("click", () => {
+    esvaziarCarrinho();
+    cartEnviado.hidden = true;
+  });
 
   /* ---------- Abrir / fechar ---------- */
   let focoAnterior = null;
@@ -285,6 +300,11 @@ document.addEventListener("DOMContentLoaded", () => {
       linhas.join("\n") +
       "\n\nTotal: " + emReais(totalValor());
     window.open(LINK_WHATSAPP + "?text=" + encodeURIComponent(texto), "_blank", "noopener");
+
+    // O pedido já foi para o WhatsApp: segurar os itens aqui faria o próximo
+    // pedido começar com o anterior dentro, sem que ninguém tenha pedido isso.
+    cartEnviado.hidden = false;
+    esvaziarCarrinho();
   });
 
   lerCarrinho();

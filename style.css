@@ -599,6 +599,29 @@ body.sem-scroll { overflow: hidden; }
 .cart-total strong { font-size: 24px; }
 .cart-nota { margin-top: 16px; font-size: 13px; color: var(--brown); opacity: 0.75; }
 
+.cart-esvaziar {
+  margin-top: 14px;
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--brown);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.cart-esvaziar:hover { opacity: 0.7; }
+
+.cart-enviado {
+  margin: 18px 0 4px;
+  padding: 14px 16px;
+  border-left: 3px solid var(--gold);
+  background: var(--white);
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--brown);
+}
+
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
 /* =====================================================================
