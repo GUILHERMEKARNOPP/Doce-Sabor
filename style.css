@@ -81,43 +81,6 @@ h1, h2, h3, p { margin: 0; }
 /* =====================================================================
    BARRA SUPERIOR
    ===================================================================== */
-.topbar {
-  background: var(--brown);
-  height: 56px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-}
-.topbar-inner {
-  display: flex;
-  align-items: flex-start;
-  gap: 24px;
-  padding-top: 7px;
-  max-width: 100%;
-  position: relative;
-  left: 20px;
-}
-.topbar-text {
-  width: 490px;
-  max-width: 100%;
-  text-align: center;
-  text-wrap: balance;
-  color: var(--white);
-  font-size: 14px;
-  line-height: 18px;
-}
-.topbar-social {
-  position: absolute;
-  left: 100%;
-  margin-left: 24px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--gold);
-  padding-top: 1px;
-}
-.topbar-social a { display: block; }
-
 /* =====================================================================
    NAVEGAÇÃO
    ===================================================================== */
@@ -321,14 +284,34 @@ h1, h2, h3, p { margin: 0; }
    NÓS ENTREGAMOS
    ===================================================================== */
 .delivery {
-  height: 357px;
   background: var(--brown);
   text-align: center;
-  padding-top: 85px;
+  padding: 78px var(--side) 84px;
+}
+.delivery-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 34px;
+  max-width: 880px;
+  margin: 46px auto 0;
+}
+.delivery-bloco h3 {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.delivery-bloco p {
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--light);
 }
 .delivery .display { font-size: 69px; margin-top: 7px; }
 .delivery .btn {
-  margin-top: 46px;
+  margin-top: 48px;
   width: 168px;
   height: 42px;
   font-size: 13.5px;
@@ -377,7 +360,7 @@ h1, h2, h3, p { margin: 0; }
   display: flex;
   padding-top: 68px;
 }
-.footer-col { width: 218px; }
+.footer-col { width: auto; }
 .footer-col h3 {
   font-family: var(--sans);
   font-size: 13px;
@@ -760,7 +743,9 @@ body.sem-scroll { overflow: hidden; }
   }
   .split-about .btn { margin-top: 2.81vw; }
 
-  .delivery { height: 26.44vw; padding-top: 6.3vw; }
+  .delivery { padding: 6.3vw var(--side) 6.8vw; }
+  .delivery-info { gap: 2.5vw; margin-top: 3.4vw; }
+  .delivery-bloco p { font-size: clamp(14px, 1.33vw, 18px); }
   .delivery .display { font-size: 5.11vw; margin-top: 0.52vw; }
   .delivery .btn { margin-top: 3.41vw; }
 
@@ -783,10 +768,6 @@ body.sem-scroll { overflow: hidden; }
 
 /* --- Celular e tablets estreitos: o mesmo desenho, empilhado --- */
 @media (max-width: 860px) {
-  .topbar { height: auto; padding: 10px 16px; }
-  .topbar-inner { width: 100%; left: 0; flex-direction: column; align-items: center; gap: 8px; padding-top: 0; }
-  .topbar-text { width: 100%; font-size: 13px; }
-  .topbar-social { position: static; margin-left: 0; }
 
   .nav-inner { padding: 0 20px; }
   .nav-toggle { display: flex; }
@@ -843,7 +824,9 @@ body.sem-scroll { overflow: hidden; }
   .about-text { width: 100%; max-width: 420px; margin-top: 24px; font-size: 15px; }
 
 
-  .delivery { height: auto; padding: 54px 20px 58px; }
+  .delivery { padding: 54px 20px 58px; }
+  .delivery-info { grid-template-columns: 1fr; gap: 26px; margin-top: 30px; }
+  .delivery-bloco p { font-size: 16px; }
   .delivery .display { font-size: 34px; margin-top: 10px; }
   .delivery .btn { margin-top: 30px; }
 

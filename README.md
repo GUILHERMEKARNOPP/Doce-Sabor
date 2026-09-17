@@ -41,8 +41,14 @@ python -m http.server 8000     # depois acesse http://localhost:8000
     └── tests/            testes de integração
 ```
 
-A página tem estas seções, nesta ordem: barra de contato, navegação, hero,
-Nossos Sabores, O Melhor Bolo de Pote, Sobre Nós, Nós Entregamos, galeria e rodapé.
+A página tem estas seções, nesta ordem: navegação, hero, Nossos Sabores,
+O Melhor Bolo de Pote, Sobre Nós, Nós Entregamos (endereço, horário e forma de
+retirada), galeria e rodapé.
+
+O endereço aparece **num lugar só**, na faixa marrom "Nós Entregamos", alcançável
+pelo link "Onde estamos" do menu. Repetir esse dado em vários cantos cria trabalho
+de manutenção e faz o cliente duvidar de qual está certo quando um deles ficar
+desatualizado.
 
 ---
 
@@ -170,13 +176,10 @@ const RESERVA = [
 Vale mantê-la parecida com o catálogo real, já que é ela que o cliente vê nos
 primeiros segundos enquanto a API acorda.
 
-### Dados de contato
+### Endereço, horário e contato
 
-No rodapé de `index.html`, procure por `ENDEREÇO`, `CONTATO` e `HORAS`.
-
-> ⚠️ O e-mail e o telefone do rodapé ainda são os do modelo original
-> (`info@mysite.com` e `123-456-7890`). **Precisam ser trocados pelos reais** antes de
-> divulgar o site.
+O endereço e o horário ficam na seção `.delivery` de `index.html` (procure por
+`delivery-bloco`). O telefone aparece também no rodapé, em `FALE COM A GENTE`.
 
 ### Cores
 
