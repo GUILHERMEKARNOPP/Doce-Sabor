@@ -380,12 +380,31 @@ h1, h2, h3, p { margin: 0; }
 
 .footer-legal { padding-top: 34px; }
 
+/* Os ícones sociais aparecem no topo e no rodapé com o mesmo desenho:
+   círculo cheio no marrom da marca, ícone em rosa. Vazados e pequenos eles
+   se perdiam no fundo. */
+.nav-social,
 .footer-social {
   display: flex;
-  gap: 12px;
   align-items: center;
-  color: #000000;
+  gap: 10px;
 }
+.nav-social a,
+.footer-social a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--brown);
+  color: var(--pink);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.nav-social a { width: 38px; height: 38px; }
+.footer-social a { width: 44px; height: 44px; }
+.nav-social a:hover,
+.footer-social a:hover { background: var(--gold); color: var(--brown); }
+
+.nav-social { margin-left: 8px; }
 
 .copyright {
   position: absolute;
@@ -790,6 +809,7 @@ body.sem-scroll { overflow: hidden; }
   }
   .nav-links.open { display: flex; }
   .nav-links a { padding: 10px 0; font-size: 16px; }
+  .nav-social { margin: 12px 0 4px; }
   .nav-cart span:not(.nav-cart-count) { display: none; }
   .nav-logo { left: 50%; font-size: 26px; }
 
