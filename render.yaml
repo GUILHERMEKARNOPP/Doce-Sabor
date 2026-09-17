@@ -5,7 +5,7 @@ services:
     name: doce-sabor-api
     runtime: node
     plan: free
-    region: oregon
+    region: ohio
     rootDir: backend
     buildCommand: npm ci
     startCommand: npm start
