@@ -239,9 +239,14 @@ h1, h2, h3, p { margin: 0; }
 .flavors-cups { display: none; }
 .flavors-btn {
   position: absolute;
-  right: 44px;
-  top: 610px;
-  width: 169px;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 585px;
+  width: auto;
+  height: 54px;
+  padding: 0 38px;
+  font-size: 15.5px;
+  white-space: nowrap;
 }
 
 /* =====================================================================
@@ -725,7 +730,7 @@ body.sem-scroll { overflow: hidden; }
   .flavors { height: 53.11vw; }
   .flavors .eyebrow { padding-top: 5.78vw; }
   .flavors .display { font-size: 5.11vw; margin-top: 1.19vw; }
-  .flavors-btn { top: auto; bottom: 4.81vw; right: 3.26vw; }
+  .flavors-btn { top: auto; bottom: 4.5vw; }
 
   .split-lactose { height: 45.41vw; }
   .split-lactose .split-text { padding-top: 15.7vw; }
@@ -810,7 +815,7 @@ body.sem-scroll { overflow: hidden; }
   .flavors-cups { display: block; width: 100%; margin: 26px 0 30px; }
   .flavors .eyebrow { padding-top: 0; font-size: 17px; }
   .flavors .display { font-size: 34px; margin-top: 12px; }
-  .flavors-btn { position: static; margin-top: 26px; }
+  .flavors-btn { position: static; transform: none; margin-top: 26px; width: 100%; padding: 0 20px; }
 
   .split { grid-template-columns: 1fr; }
   .split-lactose, .split-about { height: auto; }

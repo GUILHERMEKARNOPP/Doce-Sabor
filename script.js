@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     link.addEventListener("click", (event) => {
       const href = link.getAttribute("href");
       if (href.length < 2) return;            // href="#" nao aponta para nada
+      if (link.hasAttribute("data-abrir-menu")) return;  // esse abre o modal, nao rola
       const target = document.querySelector(href);
       if (!target) return;
       event.preventDefault();
