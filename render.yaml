@@ -1,11 +1,16 @@
 # Deploy automático no Render: cada push na branch main reconstrói a API.
 # O front-end continua no GitHub Pages, servido da raiz deste mesmo repositório.
+#
+# Como publicar: no painel do Render, New + → Blueprint → escolher este repositório.
+# O Render pergunta as variáveis marcadas com "sync: false"; preencha-as lá.
+#
+# O banco fica no Neon (fora do Render), então a DATABASE_URL é colada no painel.
 services:
   - type: web
     name: doce-sabor-api
     runtime: node
     plan: free
-    region: ohio
+    region: ohio          # mesma região do banco no Neon (AWS US East / Ohio)
     rootDir: backend
     buildCommand: npm ci
     startCommand: npm start
@@ -13,12 +18,12 @@ services:
     autoDeploy: true
     envVars:
       - key: DATABASE_URL
-        sync: false          # colar no painel do Render
+        sync: false                    # colar a connection string do Neon
       - key: JWT_SECRET
-        generateValue: true  # o Render gera um segredo forte sozinho
+        generateValue: true            # o Render gera um segredo forte sozinho
       - key: ADMIN_EMAIL
-        sync: false
+        sync: false                    # preencher no painel
       - key: ADMIN_SENHA
-        sync: false
+        sync: false                    # preencher no painel, mínimo 10 caracteres
       - key: ORIGENS_PERMITIDAS
         value: https://docesaborbr.github.io

@@ -6,17 +6,26 @@ if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL não definida — veja backend/.env.example");
 }
 
-// O Postgres local de desenvolvimento não tem certificado; em produção há TLS.
-const ehLocal = /localhost|127\.0\.0\.1/.test(process.env.DATABASE_URL);
-
 /**
- * Em produção o certificado é validado de verdade. Aceitar qualquer certificado
- * ("rejectUnauthorized: false", comum em tutoriais) criptografa sem autenticar:
- * quem conseguisse se pôr no caminho leria a senha do banco e o hash do admin,
- * e poderia forjar a resposta do login.
- * Se o provedor usar uma CA própria, coloque o certificado em DATABASE_CA_CERT.
+ * Quando validar o certificado do banco.
+ *
+ * Hostname público (tem ponto: Neon, Supabase, o endereço externo do Render) →
+ * o tráfego atravessa a internet, então o certificado é validado de verdade.
+ * Aceitar qualquer certificado, como se vê em muito tutorial, criptografa sem
+ * autenticar: quem se pusesse no caminho leria a senha do banco e o hash do
+ * admin, e poderia forjar a resposta do login.
+ *
+ * Hostname sem ponto (localhost, ou o DNS interno do Render, tipo "dpg-xxxx-a") →
+ * a conexão não sai da rede privada, que é o próprio limite de confiança. Esse
+ * endereço não tem certificado de CA pública, e exigir um só impediria a conexão.
+ *
+ * Se o provedor usar CA própria num endereço público, informe DATABASE_CA_CERT.
  */
-const tls = ehLocal
+const hospedeiro = new URL(process.env.DATABASE_URL).hostname.replace(/^\[|\]$/g, "");
+const ehLoopback = hospedeiro === "localhost" || hospedeiro === "::1" || hospedeiro.startsWith("127.");
+const ehRedeInterna = ehLoopback || !hospedeiro.includes(".");
+
+const tls = ehRedeInterna
   ? false
   : { rejectUnauthorized: true, ca: process.env.DATABASE_CA_CERT || undefined };
 
