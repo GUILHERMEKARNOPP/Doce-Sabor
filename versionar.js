@@ -8,8 +8,8 @@
  * a página — foi o que fez um produto recém-cadastrado não aparecer na loja.
  *
  * A versão é um resumo do próprio conteúdo: mudou o arquivo, muda a URL, e o
- * navegador é obrigado a buscar de novo. Rode antes de publicar uma mudança em
- * script.js, admin.js ou config.js.
+ * navegador é obrigado a buscar de novo. Rode antes de publicar qualquer mudança
+ * em style.css, script.js, admin.js ou config.js.
  */
 const fs = require("node:fs");
 const crypto = require("node:crypto");
@@ -21,21 +21,23 @@ function resumo(arquivos) {
 }
 
 const paginas = [
-  { html: "index.html", scripts: ["config.js", "script.js"] },
-  { html: "admin.html", scripts: ["config.js", "admin.js"] },
+  { html: "index.html", arquivos: ["style.css", "config.js", "script.js"] },
+  { html: "admin.html", arquivos: ["style.css", "config.js", "admin.js"] },
 ];
 
 let mudou = false;
 
-for (const { html, scripts } of paginas) {
-  const versao = resumo(scripts);
+for (const { html, arquivos } of paginas) {
+  const versao = resumo(arquivos);
   let conteudo = fs.readFileSync(html, "utf8");
   const antes = conteudo;
 
-  for (const script of scripts) {
+  for (const arquivo of arquivos) {
+    // a folha de estilo entra por href; os scripts, por src
+    const atributo = arquivo.endsWith(".css") ? "href" : "src";
     conteudo = conteudo.replace(
-      new RegExp(`src="${script}(\\?v=[a-f0-9]+)?"`),
-      `src="${script}?v=${versao}"`
+      new RegExp(`${atributo}="${arquivo}(\\?v=[a-f0-9]+)?"`),
+      `${atributo}="${arquivo}?v=${versao}"`
     );
   }
 
