@@ -69,7 +69,17 @@ O `backend/.env` guarda a senha do banco, o segredo das sessões e a senha do
 administrador. **Ele nunca vai para o Git** — está no `.gitignore`. Use o
 `.env.example` como molde.
 
-Para criar ou trocar a senha de um administrador:
+### Esqueceu a senha do painel?
+
+A variável `ADMIN_SENHA` no Render é a fonte da verdade. Para redefinir: troque o
+valor dela no painel do Render (serviço → **Environment**) e salve — o Render
+reimplanta sozinho e a senha nova passa a valer em um ou dois minutos. A antiga
+para de funcionar na hora.
+
+Isso existe porque o plano gratuito do Render não dá acesso a terminal: sem esse
+caminho, uma senha perdida trancaria vocês para fora do próprio painel.
+
+Localmente, o mesmo se faz por comando:
 
 ```bash
 cd backend && npm run criar-admin dona@docesabor.com.br "uma senha forte"

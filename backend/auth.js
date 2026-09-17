@@ -22,6 +22,11 @@ function gerarHash(senha) {
   return bcrypt.hash(senha, CUSTO_BCRYPT);
 }
 
+/** Confere uma senha contra um hash já existente. */
+function conferirHash(senha, hash) {
+  return bcrypt.compare(String(senha), hash);
+}
+
 function gerarToken(admin) {
   return jwt.sign({ sub: admin.id, email: admin.email }, SEGREDO, {
     expiresIn: HORAS_DE_SESSAO + "h",
@@ -64,4 +69,4 @@ function exigirAdmin(req, res, next) {
   }
 }
 
-module.exports = { gerarHash, gerarToken, autenticar, exigirAdmin, HORAS_DE_SESSAO };
+module.exports = { gerarHash, conferirHash, gerarToken, autenticar, exigirAdmin, HORAS_DE_SESSAO };

@@ -133,6 +133,37 @@ test("e-mail inexistente demora o mesmo que e-mail real (sem oráculo de tempo)"
   );
 });
 
+test("trocar ADMIN_SENHA redefine a senha na subida (recuperação de acesso)", async () => {
+  const { semearAdmin } = require("../server");
+  const NOVA = "senha-trocada-no-painel-do-render";
+
+  process.env.ADMIN_SENHA = NOVA;
+  await semearAdmin();
+
+  const antiga = await json("/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: EMAIL_ADMIN, senha: SENHA_ADMIN }),
+  });
+  assert.equal(antiga.status, 401, "a senha antiga deve parar de funcionar");
+
+  const nova = await json("/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: EMAIL_ADMIN, senha: NOVA }),
+  });
+  assert.equal(nova.status, 200, "a senha nova deve entrar");
+
+  // devolve o estado para os testes seguintes
+  process.env.ADMIN_SENHA = SENHA_ADMIN;
+  await semearAdmin();
+  token = (await (await json("/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: EMAIL_ADMIN, senha: SENHA_ADMIN }),
+  })).json()).token;
+});
+
 /* ----------------------------------------------------- autorização */
 
 test("criar produto sem token é barrado", async () => {

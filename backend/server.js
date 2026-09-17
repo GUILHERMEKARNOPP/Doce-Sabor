@@ -6,7 +6,7 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 
 const { migrar, consultar } = require("./db");
-const { autenticar, gerarToken, gerarHash, HORAS_DE_SESSAO } = require("./auth");
+const { autenticar, gerarToken, gerarHash, conferirHash, HORAS_DE_SESSAO } = require("./auth");
 const produtos = require("./routes/produtos");
 
 const app = express();
@@ -81,7 +81,18 @@ app.use((erro, _req, res, _next) => {
   res.status(500).json({ erro: "Não foi possível concluir a operação." });
 });
 
-/** Cria o primeiro administrador a partir das variáveis de ambiente, se ainda não existir. */
+/**
+ * Mantém o administrador em dia com as variáveis de ambiente.
+ *
+ * ADMIN_SENHA é a fonte da verdade: se ela mudar, a senha muda na próxima
+ * subida. É assim porque o plano gratuito do Render não dá acesso a terminal —
+ * se a senha se perdesse, não haveria como recuperá-la, e a loja ficaria
+ * trancada para fora do próprio painel. Trocar a variável e reimplantar é o
+ * caminho de recuperação.
+ *
+ * Isso não abre brecha nova: quem consegue ler ou editar as variáveis do Render
+ * já controla a aplicação inteira.
+ */
 async function semearAdmin() {
   const email = (process.env.ADMIN_EMAIL || "").toLowerCase().trim();
   const senha = process.env.ADMIN_SENHA || "";
@@ -91,14 +102,28 @@ async function semearAdmin() {
     console.warn("[aviso] ADMIN_SENHA tem menos de 10 caracteres — troque por uma senha forte.");
   }
 
-  const { rows } = await consultar("SELECT 1 FROM administradores WHERE email = $1", [email]);
-  if (rows.length) return;
+  const { rows } = await consultar(
+    "SELECT senha_hash FROM administradores WHERE email = $1",
+    [email]
+  );
 
-  await consultar("INSERT INTO administradores (email, senha_hash) VALUES ($1, $2)", [
+  if (!rows.length) {
+    await consultar("INSERT INTO administradores (email, senha_hash) VALUES ($1, $2)", [
+      email,
+      await gerarHash(senha),
+    ]);
+    console.log("[setup] administrador criado:", email);
+    return;
+  }
+
+  // Só regrava se a senha realmente mudou, para não gerar um hash novo a cada deploy.
+  if (await conferirHash(senha, rows[0].senha_hash)) return;
+
+  await consultar("UPDATE administradores SET senha_hash = $2 WHERE email = $1", [
     email,
     await gerarHash(senha),
   ]);
-  console.log("[setup] administrador criado:", email);
+  console.log("[setup] senha do administrador atualizada:", email);
 }
 
 async function iniciar() {
@@ -115,4 +140,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { app, iniciar };
+module.exports = { app, iniciar, semearAdmin };
