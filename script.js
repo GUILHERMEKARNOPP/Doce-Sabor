@@ -29,13 +29,47 @@ document.addEventListener("DOMContentLoaded", () => {
   // o href fica no HTML para funcionar sem JS; aqui so garantimos que siga a constante
   document.querySelectorAll("[data-whatsapp]").forEach((a) => { a.href = LINK_WHATSAPP; });
 
-  const PRODUTOS = [
-    { id: "chocolate-wafer", nome: "Chocolate com wafer", preco: 16, img: "images/menu-chocolate-wafer.jpg" },
-    { id: "morango-creme",   nome: "Morango com creme",   preco: 15, img: "images/menu-morango-creme.jpg" },
-    { id: "cookies",         nome: "Cookies com chocolate", preco: 17, img: "images/menu-cookies.jpg" },
-    { id: "doce-de-leite",   nome: "Doce de leite com brigadeiro", preco: 17, img: "images/menu-doce-de-leite.jpg" },
-    { id: "maracuja",        nome: "Maracujá com chocolate branco", preco: 18, img: "images/menu-maracuja.jpg" },
+  const API = window.DOCE_SABOR_API || "";
+
+  /**
+   * Lista de reserva. O catálogo de verdade vem da API, mas no plano gratuito do
+   * Render o servidor hiberna e a primeira resposta pode levar meio minuto — a loja
+   * não pode ficar vazia nesse tempo. Então ela abre com esta lista e troca pelos
+   * dados reais assim que chegarem.
+   */
+  const RESERVA = [
+    { id: "chocolate-wafer", nome: "Chocolate com wafer", preco: 16, estoque: null, img: "images/menu-chocolate-wafer.jpg" },
+    { id: "morango-creme",   nome: "Morango com creme",   preco: 15, estoque: null, img: "images/menu-morango-creme.jpg" },
+    { id: "cookies",         nome: "Cookies com chocolate", preco: 17, estoque: null, img: "images/menu-cookies.jpg" },
+    { id: "doce-de-leite",   nome: "Doce de leite com brigadeiro", preco: 17, estoque: null, img: "images/menu-doce-de-leite.jpg" },
+    { id: "maracuja",        nome: "Maracujá com chocolate branco", preco: 18, estoque: null, img: "images/menu-maracuja.jpg" },
   ];
+
+  let PRODUTOS = RESERVA;
+
+  /** Busca o catálogo na API. Se falhar, a loja segue com a lista de reserva. */
+  async function carregarCatalogo() {
+    if (!API) return;
+    try {
+      const resposta = await fetch(API + "/api/produtos");
+      if (!resposta.ok) return;
+      const vindos = await resposta.json();
+      if (!Array.isArray(vindos) || vindos.length === 0) return;
+
+      PRODUTOS = vindos.map((p) => ({
+        id: String(p.id),
+        nome: p.nome,
+        preco: p.preco,
+        estoque: p.estoque,
+        img: p.imagem ? API + p.imagem : null,
+      }));
+      carrinho.clear();
+      montarMenu();
+      atualizar();
+    } catch {
+      /* servidor fora do ar: a lista de reserva continua valendo */
+    }
+  }
 
   const carrinho = new Map();                 // id do produto -> quantidade
 
@@ -57,14 +91,22 @@ document.addEventListener("DOMContentLoaded", () => {
     [...carrinho].reduce((soma, [id, qtd]) => soma + produto(id).preco * qtd, 0);
 
   function montarMenu() {
+    menuGrid.replaceChildren();
     PRODUTOS.forEach((p) => {
       const li = document.createElement("li");
       li.className = "menu-item";
 
-      const img = document.createElement("img");
-      img.src = p.img;
-      img.alt = "Bolo de pote sabor " + p.nome;
-      img.loading = "lazy";
+      let img;
+      if (p.img) {
+        img = document.createElement("img");
+        img.src = p.img;
+        img.alt = "Bolo de pote sabor " + p.nome;
+        img.loading = "lazy";
+      } else {
+        img = document.createElement("div");
+        img.className = "menu-sem-foto";
+        img.textContent = "sem foto";
+      }
 
       const nome = document.createElement("h3");
       nome.textContent = p.nome;
@@ -76,7 +118,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const botao = document.createElement("button");
       botao.type = "button";
       botao.className = "btn btn-outline menu-add";
-      botao.textContent = "Adicionar";
+      const esgotado = p.estoque === 0;
+      botao.textContent = esgotado ? "Esgotado" : "Adicionar";
+      botao.disabled = esgotado;
       botao.addEventListener("click", () => adicionar(p.id));
 
       li.append(img, nome, preco, botao);
@@ -85,12 +129,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function adicionar(id) {
-    carrinho.set(id, (carrinho.get(id) || 0) + 1);
-    atualizar();
+    mudarQtd(id, 1);
   }
 
   function mudarQtd(id, delta) {
-    const nova = (carrinho.get(id) || 0) + delta;
+    const p = produto(id);
+    if (!p) return;
+
+    let nova = (carrinho.get(id) || 0) + delta;
+    // estoque null = produto da lista de reserva, sem controle de estoque
+    if (p.estoque !== null && p.estoque !== undefined) nova = Math.min(nova, p.estoque);
+
     if (nova > 0) carrinho.set(id, nova);
     else carrinho.delete(id);
     atualizar();
@@ -198,4 +247,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   montarMenu();
   atualizar();
+  carregarCatalogo();
 });

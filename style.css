@@ -19,6 +19,10 @@
 
 * { box-sizing: border-box; }
 
+/* O atributo hidden precisa vencer qualquer display de classe.
+   Sem isto, um elemento com display:flex continua na tela mesmo marcado como hidden. */
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   font-family: var(--sans);
@@ -454,7 +458,6 @@ body.sem-scroll { overflow: hidden; }
   padding: 24px;
   background: rgba(40, 14, 2, 0.55);
 }
-.modal[hidden] { display: none; }
 
 .modal-box {
   width: 100%;
@@ -497,7 +500,7 @@ body.sem-scroll { overflow: hidden; }
 /* ---------- grade de sabores ---------- */
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 20px;
 }
 .menu-item {
@@ -514,6 +517,18 @@ body.sem-scroll { overflow: hidden; }
   aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 4px;
+}
+.menu-sem-foto {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: var(--pink);
+  font-size: 13px;
+  color: var(--brown);
+  opacity: 0.7;
 }
 .menu-item h3 {
   margin-top: 14px;
@@ -566,7 +581,6 @@ body.sem-scroll { overflow: hidden; }
 .cart-valor { text-align: right; font-size: 16px; color: var(--brown); }
 .cart-vazio { padding: 18px 0; font-size: 15px; color: var(--brown); }
 
-.cart-total[hidden] { display: none; }
 .cart-total {
   display: flex;
   justify-content: space-between;
@@ -579,6 +593,141 @@ body.sem-scroll { overflow: hidden; }
 .cart-nota { margin-top: 16px; font-size: 13px; color: var(--brown); opacity: 0.75; }
 
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* =====================================================================
+   PAINEL DO ADMINISTRADOR (admin.html)
+   ===================================================================== */
+.admin { background: var(--pink); min-height: 100vh; }
+.admin .nav-inner { justify-content: space-between; }
+.admin .nav-logo { position: static; transform: none; left: auto; }
+
+.admin-main { max-width: 1060px; margin: 0 auto; padding: 44px var(--side) 80px; }
+
+.admin-titulo {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-variation-settings: "SOFT" 80, "WONK" 1;
+  font-size: 42px;
+  line-height: 1;
+  margin-top: 8px;
+  color: var(--brown);
+}
+
+.admin-cabecalho {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+/* ---------- login ---------- */
+.admin-login { display: flex; justify-content: center; padding-top: 40px; }
+.admin-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--white);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  padding: 34px 32px 36px;
+}
+.admin-card .admin-titulo { margin-bottom: 26px; }
+
+/* ---------- campos ---------- */
+.campo { display: block; margin-bottom: 18px; }
+.campo > span {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 14px;
+  color: var(--brown);
+}
+.campo > span em { font-style: normal; opacity: 0.6; }
+.campo input,
+.campo textarea {
+  width: 100%;
+  background: var(--white);
+  border: 1px solid rgba(84, 31, 3, 0.28);
+  border-radius: 4px;
+  padding: 11px 12px;
+  font-family: var(--sans);
+  font-size: 15px;
+  color: var(--brown);
+}
+.campo textarea { resize: vertical; }
+.campo input:focus,
+.campo textarea:focus { outline: 2px solid var(--gold); outline-offset: 1px; border-color: var(--gold); }
+.campo input[type="file"] { padding: 9px; font-size: 14px; }
+.campo-linha { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.admin-btn-largo { width: 100%; margin-top: 8px; }
+.admin-previa {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--gold);
+  margin-bottom: 18px;
+}
+
+.admin-erro {
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  border-left: 3px solid #A3261B;
+  background: rgba(163, 38, 27, 0.08);
+  font-size: 14px;
+  color: #7A1C14;
+}
+
+.admin-aviso {
+  margin-bottom: 18px;
+  padding: 11px 14px;
+  border-left: 3px solid var(--gold);
+  background: var(--white);
+  font-size: 14px;
+  color: var(--brown);
+}
+
+/* ---------- lista de produtos ---------- */
+.admin-linha {
+  display: grid;
+  grid-template-columns: 64px 1fr 100px 110px auto;
+  align-items: center;
+  gap: 18px;
+  background: var(--white);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+}
+.admin-foto { width: 64px; height: 64px; border-radius: 4px; overflow: hidden; }
+.admin-foto img { width: 100%; height: 100%; object-fit: cover; }
+.admin-foto-vazia {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pink);
+  font-size: 11px;
+  text-align: center;
+  color: var(--brown);
+  opacity: 0.7;
+}
+.admin-dados h3 {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-variation-settings: "SOFT" 80, "WONK" 1;
+  font-size: 19px;
+  line-height: 1.2;
+  color: var(--brown);
+}
+.admin-descricao { margin-top: 4px; font-size: 14px; line-height: 1.35; color: var(--brown); opacity: 0.75; }
+.admin-preco { font-size: 16px; font-weight: 500; color: var(--brown); }
+.admin-estoque { font-size: 14px; color: var(--brown); }
+.admin-estoque-zero { color: #A3261B; font-weight: 500; }
+.admin-acoes { display: flex; gap: 8px; }
+.admin-btn-pequeno { height: 34px; padding: 0 14px; font-size: 13px; }
+.admin-btn-perigo { color: #A3261B; border-color: #A3261B; }
+
+.admin-vazio { padding: 30px 0; font-size: 15px; color: var(--brown); }
+.admin-confirma { font-size: 16px; line-height: 1.45; color: var(--brown); }
 
 /* =====================================================================
    RESPONSIVO
@@ -712,6 +861,18 @@ body.sem-scroll { overflow: hidden; }
   .modal-foot .btn { width: 100%; }
   .cart-item { grid-template-columns: 1fr auto; row-gap: 10px; }
   .cart-valor { grid-column: 2; text-align: right; }
+
+  .admin-main { padding: 28px 20px 60px; }
+  .admin-titulo { font-size: 30px; }
+  .admin-cabecalho { flex-direction: column; align-items: stretch; gap: 16px; }
+  .admin-linha {
+    grid-template-columns: 56px 1fr;
+    row-gap: 10px;
+  }
+  .admin-preco, .admin-estoque { grid-column: 2; }
+  .admin-acoes { grid-column: 1 / -1; }
+  .admin-acoes .btn { flex: 1; }
+  .campo-linha { grid-template-columns: 1fr; gap: 0; }
 
   .footer { padding: 0 20px 24px; }
   .footer-logo { font-size: 46px; padding-top: 42px; }

@@ -14,5 +14,8 @@ dist/
 # Segredos — nunca versionar
 .env
 .env.*
+!.env.example
 *.key
 *.pem
+backend/node_modules/
+backend/.env

@@ -1,0 +1,36 @@
+{
+  "name": "doce-sabor-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API do Doce Sabor: catálogo de bolos de pote e painel do administrador",
+  "type": "commonjs",
+  "main": "server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "criar-admin": "node scripts/criar-admin.js",
+    "test": "node --test tests/*.test.js",
+    "db:dev": "node scripts/pg-dev.js"
+  },
+  "dependencies": {
+    "bcryptjs": "2.4.3",
+    "cors": "2.8.5",
+    "dotenv": "16.4.5",
+    "express": "4.21.2",
+    "express-rate-limit": "7.4.1",
+    "helmet": "8.0.0",
+    "jsonwebtoken": "9.0.2",
+    "multer": "1.4.5-lts.1",
+    "pg": "8.13.1",
+    "sharp": "0.33.5"
+  },
+  "devDependencies": {
+    "embedded-postgres": "^18.4.0-beta.17"
+  },
+  "allowScripts": {
+    "@embedded-postgres/windows-x64@18.4.0-beta.17": true
+  }
+}

@@ -1,0 +1,24 @@
+# Deploy automático no Render: cada push na branch main reconstrói a API.
+# O front-end continua no GitHub Pages, servido da raiz deste mesmo repositório.
+services:
+  - type: web
+    name: doce-sabor-api
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: backend
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/saude
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        sync: false          # colar no painel do Render
+      - key: JWT_SECRET
+        generateValue: true  # o Render gera um segredo forte sozinho
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_SENHA
+        sync: false
+      - key: ORIGENS_PERMITIDAS
+        value: https://docesaborbr.github.io
