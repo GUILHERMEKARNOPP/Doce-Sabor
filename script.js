@@ -134,6 +134,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const enderecoCampo = document.getElementById("endereco");
   const footCarrinho = document.getElementById("footCarrinho");
   const footEntrega = document.getElementById("footEntrega");
+  const campoEndereco = document.getElementById("campoEndereco");
+  const opcaoRetirada = document.getElementById("opcaoRetirada");
+  const opcaoEntrega = document.getElementById("opcaoEntrega");
+  const enviarBtn = document.getElementById("enviar");
 
   const emReais = (v) => "R$ " + v.toFixed(2).replace(".", ",");
   const produto = (id) => PRODUTOS.find((p) => p.id === id);
@@ -336,17 +340,38 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("irCarrinho").addEventListener("click", () => abrir(cartModal));
   document.getElementById("voltarMenu").addEventListener("click", () => abrir(menuModal));
 
-  /** Alterna entre o resumo do carrinho e o passo do endereço. */
+  /** Alterna entre o resumo do carrinho e o passo da forma de entrega. */
   function mostrarPassoEndereco(mostrar) {
     cartEntrega.hidden = !mostrar;
     footEntrega.hidden = !mostrar;
     footCarrinho.hidden = mostrar;
     esvaziarBtn.hidden = mostrar || totalItens() === 0;
-    if (mostrar) enderecoCampo.focus();
+    if (!mostrar) escolherEntrega(null);
   }
 
-  // Finalizar não manda direto: sem o endereço o pedido chega na loja sem dizer
-  // para onde vai, e alguém precisa perguntar por mensagem antes de produzir.
+  /**
+   * Marca a forma escolhida. O campo de endereço só existe na entrega: pedir
+   * endereço a quem vai buscar no balcão faria a pessoa inventar alguma coisa
+   * só para conseguir enviar o pedido.
+   */
+  function escolherEntrega(modo) {
+    opcaoRetirada.setAttribute("aria-pressed", String(modo === "retirada"));
+    opcaoEntrega.setAttribute("aria-pressed", String(modo === "entrega"));
+    campoEndereco.hidden = modo !== "entrega";
+    enviarBtn.hidden = modo !== "entrega";
+    if (modo === "entrega") enderecoCampo.focus();
+  }
+
+  opcaoEntrega.addEventListener("click", () => escolherEntrega("entrega"));
+
+  opcaoRetirada.addEventListener("click", () => {
+    // Retirada não precisa de mais nada: segue direto para o WhatsApp.
+    escolherEntrega("retirada");
+    enviarPedido("Retirada na loja (Rua do Príncipe, 500 — Centro)");
+  });
+
+  // Finalizar não manda direto: o pedido chegava na loja sem dizer se alguém
+  // vem buscar ou se é para entregar, e em que endereço.
   finalizarBtn.addEventListener("click", () => {
     if (carrinho.size === 0) return;
     mostrarPassoEndereco(true);
@@ -356,18 +381,14 @@ document.addEventListener("DOMContentLoaded", () => {
     mostrarPassoEndereco(false);
   });
 
-  document.getElementById("enviar").addEventListener("click", () => {
+  /** Monta a mensagem do pedido e abre a conversa da loja. */
+  function enviarPedido(entrega) {
     if (carrinho.size === 0) return;
 
     const linhas = [...carrinho].map(
       ([id, qtd]) =>
         "• Bolo de pote sabor " + produto(id).nome + " — " + qtd + " un — " + emReais(produto(id).preco * qtd)
     );
-
-    const endereco = enderecoCampo.value.trim();
-    const entrega = endereco
-      ? "Entrega em: " + endereco
-      : "Retirada na loja (Rua do Príncipe, 500 — Centro)";
 
     const texto =
       "Olá! Quero fazer um pedido no Doce Sabor:\n\n" +
@@ -383,6 +404,15 @@ document.addEventListener("DOMContentLoaded", () => {
     mostrarPassoEndereco(false);
     cartEnviado.hidden = false;
     esvaziarCarrinho();
+  }
+
+  enviarBtn.addEventListener("click", () => {
+    const endereco = enderecoCampo.value.trim();
+    if (!endereco) {
+      enderecoCampo.focus();
+      return;
+    }
+    enviarPedido("Entrega em: " + endereco);
   });
 
   lerCarrinho();

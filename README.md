@@ -126,9 +126,10 @@ O catálogo vem da API; o carrinho e o fechamento acontecem no navegador:
 2. Cada **Adicionar** soma uma unidade. O contador dourado na barra de navegação
    acompanha.
 3. Em **Ir para o carrinho** ele revisa itens, quantidades e total.
-4. **Finalizar compra** pede o endereço de entrega. O campo é opcional: em branco,
-   o pedido vai como retirada na loja.
-5. **Enviar pelo WhatsApp** abre a conversa com a mensagem já escrita:
+4. **Finalizar compra** pergunta como ele quer receber:
+   - **Retirar na loja** manda o pedido na hora, com o endereço da loja na mensagem.
+   - **Receber em casa** abre o campo de endereço, que aí é obrigatório.
+5. O WhatsApp abre com a mensagem já escrita:
 
 ```
 Olá! Quero fazer um pedido no Doce Sabor:

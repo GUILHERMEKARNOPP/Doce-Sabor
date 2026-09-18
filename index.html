@@ -24,7 +24,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,400..900,0..100,0..1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=b69d9fb7">
+<link rel="stylesheet" href="style.css?v=7aaf4f41">
 </head>
 <body>
 
@@ -204,8 +204,20 @@
     <button type="button" class="cart-esvaziar" id="esvaziar">Esvaziar carrinho</button>
 
     <div class="cart-entrega" id="cartEntrega" hidden>
-      <label class="campo">
-        <span>Endereço para entrega <em>(deixe em branco se for retirar na loja)</em></span>
+      <p class="cart-pergunta">Como você quer receber?</p>
+      <div class="cart-opcoes" role="group" aria-label="Forma de entrega">
+        <button type="button" class="cart-opcao" id="opcaoRetirada">
+          <strong>Retirar na loja</strong>
+          <span>Rua do Príncipe, 500 — Centro</span>
+        </button>
+        <button type="button" class="cart-opcao" id="opcaoEntrega">
+          <strong>Receber em casa</strong>
+          <span>Informe o endereço</span>
+        </button>
+      </div>
+
+      <label class="campo" id="campoEndereco" hidden>
+        <span>Endereço para entrega</span>
         <textarea id="endereco" rows="2" maxlength="200"
                   placeholder="Rua, número, bairro e um ponto de referência"></textarea>
       </label>
@@ -217,13 +229,13 @@
     </div>
     <div class="modal-foot" id="footEntrega" hidden>
       <button type="button" class="btn btn-outline" id="voltarCarrinho">Voltar</button>
-      <button type="button" class="btn btn-brown" id="enviar">Enviar pelo WhatsApp</button>
+      <button type="button" class="btn btn-brown" id="enviar" hidden>Enviar pelo WhatsApp</button>
     </div>
     <p class="cart-nota">O pedido é confirmado pelo WhatsApp da loja.</p>
   </div>
 </div>
 
-<script src="config.js?v=b69d9fb7"></script>
-<script src="script.js?v=b69d9fb7"></script>
+<script src="config.js?v=7aaf4f41"></script>
+<script src="script.js?v=7aaf4f41"></script>
 </body>
 </html>
