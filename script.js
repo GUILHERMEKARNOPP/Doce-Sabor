@@ -130,6 +130,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const finalizarBtn = document.getElementById("finalizar");
   const cartEnviado = document.getElementById("cartEnviado");
   const esvaziarBtn = document.getElementById("esvaziar");
+  const cartEntrega = document.getElementById("cartEntrega");
+  const enderecoCampo = document.getElementById("endereco");
+  const footCarrinho = document.getElementById("footCarrinho");
+  const footEntrega = document.getElementById("footEntrega");
 
   const emReais = (v) => "R$ " + v.toFixed(2).replace(".", ",");
   const produto = (id) => PRODUTOS.find((p) => p.id === id);
@@ -279,6 +283,7 @@ document.addEventListener("DOMContentLoaded", () => {
     cartVazio.hidden = itens > 0 || !cartEnviado.hidden;
     cartTotalRow.hidden = itens === 0;
     esvaziarBtn.hidden = itens === 0;
+    if (itens === 0 && !cartEntrega.hidden) mostrarPassoEndereco(false);
     cartTotal.textContent = emReais(totalValor());
     finalizarBtn.disabled = itens === 0;
   }
@@ -331,20 +336,51 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("irCarrinho").addEventListener("click", () => abrir(cartModal));
   document.getElementById("voltarMenu").addEventListener("click", () => abrir(menuModal));
 
+  /** Alterna entre o resumo do carrinho e o passo do endereço. */
+  function mostrarPassoEndereco(mostrar) {
+    cartEntrega.hidden = !mostrar;
+    footEntrega.hidden = !mostrar;
+    footCarrinho.hidden = mostrar;
+    esvaziarBtn.hidden = mostrar || totalItens() === 0;
+    if (mostrar) enderecoCampo.focus();
+  }
+
+  // Finalizar não manda direto: sem o endereço o pedido chega na loja sem dizer
+  // para onde vai, e alguém precisa perguntar por mensagem antes de produzir.
   finalizarBtn.addEventListener("click", () => {
     if (carrinho.size === 0) return;
+    mostrarPassoEndereco(true);
+  });
+
+  document.getElementById("voltarCarrinho").addEventListener("click", () => {
+    mostrarPassoEndereco(false);
+  });
+
+  document.getElementById("enviar").addEventListener("click", () => {
+    if (carrinho.size === 0) return;
+
     const linhas = [...carrinho].map(
       ([id, qtd]) =>
         "• Bolo de pote sabor " + produto(id).nome + " — " + qtd + " un — " + emReais(produto(id).preco * qtd)
     );
+
+    const endereco = enderecoCampo.value.trim();
+    const entrega = endereco
+      ? "Entrega em: " + endereco
+      : "Retirada na loja (Rua do Príncipe, 500 — Centro)";
+
     const texto =
       "Olá! Quero fazer um pedido no Doce Sabor:\n\n" +
       linhas.join("\n") +
-      "\n\nTotal: " + emReais(totalValor());
+      "\n\nTotal: " + emReais(totalValor()) +
+      "\n\n" + entrega;
+
     window.open(LINK_WHATSAPP + "?text=" + encodeURIComponent(texto), "_blank", "noopener");
 
     // O pedido já foi para o WhatsApp: segurar os itens aqui faria o próximo
     // pedido começar com o anterior dentro, sem que ninguém tenha pedido isso.
+    enderecoCampo.value = "";
+    mostrarPassoEndereco(false);
     cartEnviado.hidden = false;
     esvaziarCarrinho();
   });

@@ -671,6 +671,26 @@ body.sem-scroll { overflow: hidden; }
 }
 .cart-esvaziar:hover { opacity: 0.7; }
 
+.cart-entrega { margin-top: 20px; }
+.cart-entrega .campo { margin-bottom: 0; }
+.cart-entrega textarea {
+  width: 100%;
+  background: var(--white);
+  border: 1px solid rgba(84, 31, 3, 0.28);
+  border-radius: 8px;
+  padding: 11px 13px;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--brown);
+  resize: vertical;
+}
+.cart-entrega textarea:focus {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+  border-color: var(--gold);
+}
+
 .cart-enviado {
   margin: 18px 0 4px;
   padding: 14px 16px;

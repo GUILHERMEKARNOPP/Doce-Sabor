@@ -126,7 +126,9 @@ O catálogo vem da API; o carrinho e o fechamento acontecem no navegador:
 2. Cada **Adicionar** soma uma unidade. O contador dourado na barra de navegação
    acompanha.
 3. Em **Ir para o carrinho** ele revisa itens, quantidades e total.
-4. **Finalizar compra** abre o WhatsApp da loja com a mensagem já escrita:
+4. **Finalizar compra** pede o endereço de entrega. O campo é opcional: em branco,
+   o pedido vai como retirada na loja.
+5. **Enviar pelo WhatsApp** abre a conversa com a mensagem já escrita:
 
 ```
 Olá! Quero fazer um pedido no Doce Sabor:
@@ -135,6 +137,8 @@ Olá! Quero fazer um pedido no Doce Sabor:
 • Bolo de pote sabor Chocolate com wafer — 2 un — R$ 32,00
 
 Total: R$ 47,00
+
+Entrega em: Rua das Palmeiras, 320, apto 12 — Bucarein
 ```
 
 > **Atenção, para quem atende os pedidos:** o preço e a quantidade são calculados no
